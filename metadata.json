@@ -1,0 +1,6 @@
+{
+  "name": "Hotel París Jaén",
+  "description": "Sistema de reservaciones para Hotel París Jaén con selección de habitaciones, cálculo de estadía y contacto directo por WhatsApp.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

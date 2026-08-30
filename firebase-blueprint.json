@@ -1,0 +1,70 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "Information about a registered guest or hotel manager",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "name": { "type": "string", "maxLength": 100 },
+        "email": { "type": "string", "maxLength": 150 },
+        "avatar": { "type": "string", "maxLength": 500 },
+        "provider": { "type": "string", "enum": ["google", "email"] },
+        "phone": { "type": "string", "maxLength": 30 }
+      },
+      "required": ["id", "name", "email"]
+    },
+    "Reservation": {
+      "title": "Reservation",
+      "description": "Hotel Paris guest room booking record",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "code": { "type": "string", "maxLength": 50 },
+        "userId": { "type": "string", "maxLength": 128 },
+        "guestName": { "type": "string", "maxLength": 100 },
+        "guestEmail": { "type": "string", "maxLength": 150 },
+        "guestPhone": { "type": "string", "maxLength": 30 },
+        "guestDocType": { "type": "string", "enum": ["DNI", "CE", "Pasaporte"] },
+        "guestDocNumber": { "type": "string", "maxLength": 50 },
+        "roomId": { "type": "string", "enum": ["matrimonial", "doble"] },
+        "roomTitle": { "type": "string", "maxLength": 100 },
+        "roomPrice": { "type": "number" },
+        "checkInDate": { "type": "string", "maxLength": 20 },
+        "checkOutDate": { "type": "string", "maxLength": 20 },
+        "adults": { "type": "number" },
+        "children": { "type": "number" },
+        "nights": { "type": "number" },
+        "specialRequests": { "type": "string", "maxLength": 1000 },
+        "subtotal": { "type": "number" },
+        "totalPrice": { "type": "number" },
+        "status": { "type": "string", "enum": ["pending", "confirmed", "checked-in", "cancelled"] },
+        "paymentMethod": { "type": "string", "enum": ["hotel_counter", "yape_plin", "transfer"] },
+        "createdAt": { "type": "string", "maxLength": 50 }
+      },
+      "required": ["id", "code", "userId", "guestName", "guestEmail", "guestPhone", "roomId", "checkInDate", "checkOutDate", "status", "totalPrice"]
+    },
+    "HotelConfig": {
+      "title": "HotelConfig",
+      "description": "Configuration and rooms data for Hotel Paris",
+      "type": "object",
+      "properties": {
+        "rooms": { "type": "array" }
+      }
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "Stores guest user profile"
+    },
+    "/reservations/{reservationId}": {
+      "schema": "Reservation",
+      "description": "Stores room bookings"
+    },
+    "/hotel_config/{configId}": {
+      "schema": "HotelConfig",
+      "description": "Stores hotel room details and images"
+    }
+  }
+}

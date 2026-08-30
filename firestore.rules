@@ -1,0 +1,60 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isHotelAdmin() {
+      return isSignedIn() && (
+        request.auth.token.email == 'htelparisjaen@gmail.com' ||
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+      );
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    // Default deny catch-all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Admin collection
+    match /admins/{adminId} {
+      allow read: if isSignedIn();
+      allow write: if isHotelAdmin();
+    }
+
+    // User Profiles
+    match /users/{userId} {
+      allow read, get: if isOwner(userId) || isHotelAdmin();
+      allow write, create, update: if isOwner(userId) || isHotelAdmin();
+    }
+
+    // Reservations collection
+    match /reservations/{reservationId} {
+      allow get: if isSignedIn() && (resource.data.userId == request.auth.uid || isHotelAdmin());
+      allow list: if isSignedIn() && (resource.data.userId == request.auth.uid || isHotelAdmin());
+      allow create: if isSignedIn() || (request.resource.data.guestEmail is string && request.resource.data.roomId is string);
+      allow update: if isSignedIn() && (
+        resource.data.userId == request.auth.uid ||
+        isHotelAdmin()
+      );
+      allow delete: if isHotelAdmin();
+    }
+
+    // Hotel Room configuration & images
+    match /hotel_config/{configId} {
+      allow read, get: if true; // Public read so guests see customized photos & room details
+      allow write, create, update: if true;
+    }
+  }
+}
