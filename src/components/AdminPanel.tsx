@@ -73,7 +73,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
   // Handle PIN Login
   const handlePinSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (pinInput === 'HP2026Jaen' || pinInput === '1234' || pinInput === 'admin') {
+if (pinInput === 'HP2026Jaen') {
       setIsAuthenticated(true);
       sessionStorage.setItem('hotel_paris_admin_auth', 'true');
       setPinError('');
